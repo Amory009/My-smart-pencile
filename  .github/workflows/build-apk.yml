@@ -10,35 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. نسخ ملفات المشروع من مستودعك
+    # 1. جلب الملفات من مستودعك
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2. تثبيت بيئة الجافا المطلوبة للأندرويد
+    # 2. تثبيت الجافا الأساسية للأندرويد
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
         distribution: 'zulu'
         java-version: '17'
 
-    # 3. تحميل وتثبيت بيئة Flutter الرسمية في السيرفر
+    # 3. تثبيت بيئة فلاتر الكاملة (وليس دارت فقط)
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.19.0'
         channel: 'stable'
 
-    # 4. تحميل المكتبات البرمجية المعتمدة والتأكد من سلامة المشروع
+    # 4. تحميل الحزم باستخدام أمر فلاتر الصحيح
     - name: Install dependencies
       run: flutter pub get
 
-    # 5. طبخ وبناء ملف الـ APK الاحترافي عالي السلاسة
+    # 5. بناء تطبيق الأندرويد
     - name: Build APK
       run: flutter build apk --debug
 
-    # 6. رفع ملف الـ APK الناتج لتحميله على هاتفك
+    # 6. استخراج الملف لتنزيله على الهاتف
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: Flutter-Drawing-App
-        path: build/app/outputs/flutter-apk/My-smart-pencil.apk
+        path: build/app/outputs/flutter-apk/app-debug.apk
