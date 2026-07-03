@@ -49,11 +49,11 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     const Text(
                       '✏️ قلمي الذكي ✏️',
-                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.purple, fontFamily: 'Sans'),
+                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.purple),
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'تعلم كتابة الحروف والأرقام العربية بسلاسة متناهية وبدون إنترنت!',
+                      'تعلم كتابة الحروف والأرقام العربية مع السهم التوجيهي الذكي بدون إنترنت!',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
                     ),
@@ -67,7 +67,6 @@ class HomeScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                       ),
                       onPressed: () {
-                        // الانتقال الفوري لشاشة الرسم والتتبع
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const DrawingScreen()),
@@ -89,7 +88,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// 2. شاشة الرسم والتتبع الذكي
+// 2. شاشة الرسم والتتبع الذكي مع الأسهم الموجهة
 class DrawingScreen extends StatefulWidget {
   const DrawingScreen({super.key});
 
@@ -98,20 +97,58 @@ class DrawingScreen extends StatefulWidget {
 }
 
 class _DrawingScreenState extends State<DrawingScreen> {
-  // قائمة الحروف والأرقام ليتعلمها الطفل
-  final List<String> itemsToLearn = [
-    'أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'هـ', 'و', 'ي',
-    '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩', '١٠'
+  // الحروف مع معلومات الأسهم التوجيهية (نص الحرف، واتجاه السهم المناسب له بصرياً)
+  final List<Map<String, dynamic>> itemsToLearn = [
+    {'char': 'أ', 'arrow': Icons.arrow_downward, 'align': Alignment.topCenter, 'hint': 'اكتب من الأعلى لأسفل'},
+    {'char': 'ب', 'arrow': Icons.arrow_back, 'align': Alignment.bottomRight, 'hint': 'اكتب من اليمين إلى اليسار ثم لأعلى'},
+    {'char': 'ت', 'arrow': Icons.arrow_back, 'align': Alignment.bottomRight, 'hint': 'اكتب الطبق ثم ضع النقطتين'},
+    {'char': 'ث', 'arrow': Icons.arrow_back, 'align': Alignment.bottomRight, 'hint': 'اكتب الطبق ثم ضع الثلاث نقاط'},
+    {'char': 'ج', 'arrow': Icons.screen_rotation, 'align': Alignment.topRight, 'hint': 'ابدأ من الخط العلوي ثم الدوران'},
+    {'char': 'ح', 'arrow': Icons.screen_rotation, 'align': Alignment.topRight, 'hint': 'ابدأ من الخط العلوي ثم الدوران'},
+    {'char': 'خ', 'arrow': Icons.screen_rotation, 'align': Alignment.topRight, 'hint': 'ابدأ من الخط العلوي ثم الدوران'},
+    {'char': 'د', 'arrow': Icons.south_west, 'align': Alignment.topCenter, 'hint': 'انزل منحني ثم امشِ على السطر'},
+    {'char': 'ذ', 'arrow': Icons.south_west, 'align': Alignment.topCenter, 'hint': 'انزل منحني ثم ضع النقطة'},
+    {'char': 'ر', 'arrow': Icons.south_west, 'align': Alignment.topRight, 'hint': 'تزحلق لأسفل السطر'},
+    {'char': 'ز', 'arrow': Icons.south_west, 'align': Alignment.topRight, 'hint': 'تزحلق لأسفل السطر وضع النقطة'},
+    {'char': 'س', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'اكتب السنون ثم الكأس الكبير'},
+    {'char': 'ش', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'اكتب السنون والنقاط ثم الكأس'},
+    {'char': 'ص', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً ثم الكأس'},
+    {'char': 'ض', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً ثم الكأس والنقطة'},
+    {'char': 'ط', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً ثم ضع العصا من أعلى'},
+    {'char': 'ظ', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً وعصا ونقطة'},
+    {'char': 'ع', 'arrow': Icons.refresh, 'align': Alignment.topRight, 'hint': 'نصف دائرة صغيرة ثم نصف دائرة كبيرة'},
+    {'char': 'غ', 'arrow': Icons.refresh, 'align': Alignment.topRight, 'hint': 'نصف دائرة صغيرة وكبيرة ونقطة'},
+    {'char': 'ف', 'arrow': Icons.looks, 'align': Alignment.bottomRight, 'hint': 'دائرة صغيرة ثم طبق الفاء'},
+    {'char': 'ق', 'arrow': Icons.looks, 'align': Alignment.topRight, 'hint': 'دائرة ثم كأس ينزل تحت السطر ونقطتان'},
+    {'char': 'ك', 'arrow': Icons.arrow_downward, 'align': Alignment.topRight, 'hint': 'انزل مستقيماً ثم امشِ واكتب الهمزة'},
+    {'char': 'ل', 'arrow': Icons.arrow_downward, 'align': Alignment.topRight, 'hint': 'عصا طويلة تنزل بكأس تحت السطر'},
+    {'char': 'م', 'arrow': Icons.radio_button_checked, 'align': Alignment.topRight, 'hint': 'دائرة صغيرة وانزل لأسفل'},
+    {'char': 'ن', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'كأس غائر وداخله نقطة'},
+    {'char': 'هـ', 'arrow': Icons.loop, 'align': Alignment.topRight, 'hint': 'دائرة كبيرة وداخلها دائرة صغيرة'},
+    {'char': 'و', 'arrow': Icons.looks, 'align': Alignment.topRight, 'hint': 'رأس الفاء وجسم الراء المتزحلق'},
+    {'char': 'ي', 'arrow': Icons.trending_down, 'align': Alignment.topRight, 'hint': 'شكل البطة ونقطتين تحت السطر'},
+    {'char': '١', 'arrow': Icons.arrow_downward, 'align': Alignment.topCenter, 'hint': 'من الأعلى لأسفل'},
+    {'char': '٢', 'arrow': Icons.arrow_back, 'align': Alignment.topRight, 'hint': 'امشِ يساراً ثم انزل لأسفل'},
+    {'char': '٣', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'سنتين ثم انزل لأسفل'},
+    {'char': '٤', 'arrow': Icons.trending_down, 'align': Alignment.topRight, 'hint': 'منحنيين متتاليين'},
+    {'char': '٥', 'arrow': Icons.loop, 'align': Alignment.topCenter, 'hint': 'دائرة مستديرة'},
+    {'char': '٦', 'arrow': Icons.arrow_forward, 'align': Alignment.topLeft, 'hint': 'امشِ يميناً ثم انزل لأسفل'},
+    {'char': '٧', 'arrow': Icons.south_west, 'align': Alignment.topLeft, 'hint': 'انزل ثم اصعد لأعلى'},
+    {'char': '٨', 'arrow': Icons.north_east, 'align': Alignment.bottomRight, 'hint': 'اصعد ثم انزل لأسفل'},
+    {'char': '٩', 'arrow': Icons.loop, 'align': Alignment.topRight, 'hint': 'عصا وفي أعلاها دائرة'},
+    {'char': '١٠', 'arrow': Icons.arrow_downward, 'align': Alignment.topCenter, 'hint': 'واحد وبجانبه نقطة'}
   ];
 
   int currentIndex = 0;
-  List<Offset?> points = []; // تخزين نقاط الرسم بالإصبع
+  List<Offset?> points = [];
 
   @override
   Widget build(BuildContext context) {
+    var currentItem = itemsToLearn[currentIndex];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تتبع واكتب الحرف', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('تتبع السهم واكتب الحرف', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.purple,
         centerTitle: true,
         leading: IconButton(
@@ -123,7 +160,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
         children: [
           // لوحة التحكم العلوية لاختيار الحرف
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -132,13 +169,13 @@ class _DrawingScreenState extends State<DrawingScreen> {
                   onPressed: currentIndex > 0 ? () {
                     setState(() {
                       currentIndex--;
-                      points.clear(); // مسح اللوحة عند الانتقال
+                      points.clear();
                     });
                   } : null,
                   child: const Text('السابق', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
                 Text(
-                  'تعلّم: ${itemsToLearn[currentIndex]}',
+                  'تعلّم: ${currentItem['char']}',
                   style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.purple),
                 ),
                 ElevatedButton(
@@ -155,24 +192,60 @@ class _DrawingScreenState extends State<DrawingScreen> {
             ),
           ),
 
+          // شريط التوجيه الصوتي النصي التفاعلي للأطفال
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(color: Colors.purple.shade50, borderRadius: BorderRadius.circular(10)),
+            child: Text(
+              '💡 ${currentItem['hint']}',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.purple.shade800, fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+          ),
+
           // لوحة الرسم (Canvas) والتتبع
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Stack(
                 children: [
-                  // الطبقة الخلفية: الحرف الشفاف الكبير جداً ليقوم الطفل بتتبعه
+                  // الطبقة الخلفية: الحرف الشفاف الكبير جداً ليوجه يد الطفل
                   Center(
                     child: Text(
-                      itemsToLearn[currentIndex],
+                      currentItem['char'],
                       style: TextStyle(
                         fontSize: 280,
                         fontWeight: FontWeight.w100,
-                        color: Colors.grey.withOpacity(0.18), // شفاف ليعمل كمرشد
+                        color: Colors.grey.withOpacity(0.18),
                       ),
                     ),
                   ),
                   
+                  // الطبقة المتوسطة: السهم التوجيهي الذكي المتحرك لإرشاد الطفل من أين يبدأ
+                  Align(
+                    alignment: currentItem['align'],
+                    child: Padding(
+                      padding: const EdgeInsets.all(40.0),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withOpacity(0.8),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(color: Colors.amber.shade300, blurRadius: 12, spreadRadius: 4)
+                          ]
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Icon(
+                          currentItem['arrow'],
+                          size: 36,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+
                   // الطبقة الأمامية: لوحة اللمس والرسم الفعلي بسلاسة فلاتر
                   Container(
                     decoration: BoxDecoration(
@@ -185,12 +258,11 @@ class _DrawingScreenState extends State<DrawingScreen> {
                         setState(() {
                           RenderBox object = context.findRenderObject() as RenderBox;
                           Offset localPosition = object.globalToLocal(details.globalPosition);
-                          // خصم المسافة التقريبية لـ AppBar والتحكم العلوي لضبط دقة اللمس
-                          points.add(localPosition - const Offset(0, 110)); 
+                          points.add(localPosition - const Offset(0, 130)); // ضبط حساسية اللمس للأجهزة المختلفة
                         });
                       },
                       onPanEnd: (DragEndDetails details) {
-                        points.add(null); // قفل الخط المكتوب عند رفع الإصبع
+                        points.add(null);
                       },
                       child: CustomPaint(
                         painter: DrawingPainter(points: points),
@@ -217,7 +289,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
                   ),
                   onPressed: () {
                     setState(() {
-                      points.clear(); // مسح اللوحة بالكامل
+                      points.clear();
                     });
                   },
                   icon: const Icon(Icons.delete, color: Colors.white),
@@ -232,7 +304,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
   }
 }
 
-// الرسام الخاص برسم الخطوط الملونة بسلاسة تامة على الشاشة
 class DrawingPainter extends CustomPainter {
   final List<Offset?> points;
 
@@ -241,9 +312,9 @@ class DrawingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.amber.shade700 // لون قلم التلوين الخاص بالطفل
-      ..strokeCap = StrokeCap.round // جعل أطراف الخط دائرية وجميلة
-      ..strokeWidth = 10.0; // سمك الفرشاة لتناسب أصابع الأطفال
+      ..color = Colors.amber.shade700
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 11.0; // زيادة السمك قليلاً لتسهيل الرؤية للطفل
 
     for (int i = 0; i < points.length - 1; i++) {
       if (points[i] != null && points[i + 1] != null) {
