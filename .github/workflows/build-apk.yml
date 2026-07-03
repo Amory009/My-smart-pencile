@@ -10,25 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. جلب الملفات الأساسية من مستودعك
+    # 1. جلب الملفات من مستودعك
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2. تثبيت الجافا المتوافقة والمستقرة لبناء الأندرويد
+    # 2. تثبيت الجافا الأساسية للأندرويد
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
         distribution: 'zulu'
         java-version: '17'
 
-    # 3. تثبيت بيئة فلاتر المستقرة تماماً
+    # 3. تثبيت بيئة فلاتر المستقرة
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.19.0'
         channel: 'stable'
 
-    # 4. بناء هيكل أندرويد متوافق ومستقر للسيرفرات السحابية
+    # 4. توليد هيكل أندرويد متوافق ومستقر للسيرفرات السحابية
     - name: Auto-create Flutter project structures
       run: |
         flutter create --org com.ammar --project-name my_drawing_app temp_project
@@ -38,17 +38,19 @@ jobs:
         mv temp_project/* ./ || true
         mv temp_project/.[!.]* ./ || true
 
-    # 5. تنظيف وتحديث الحزم والمكتبات بالكامل
+    # 5. جلب الحزم والمكتبات
     - name: Install dependencies
-      run: |
-        flutter pub get
-        flutter clean
+      run: flutter pub get
 
-    # 6. بناء التطبيق مع تخطي أي تعارضات في ملفات أندرويد الهيكلية
+    # 6. تهيئة ملفات الأندرويد لضمان العمل على أي جهاز
+    - name: Pre-build Android configurations
+      run: flutter build apk --config-only
+
+    # 7. بناء التطبيق بأسلوب فلاتر القياسي والنظيف
     - name: Build APK
-      run: flutter build apk --debug --subprojects-of-plugins
+      run: flutter build apk --debug
 
-    # 7. استخراج وحفظ ملف الـ APK النهائي لمشاركته مع أي هاتف آخر
+    # 8. استخراج وحفظ ملف الـ APK النهائي لمشاركته مع أي هاتف آخر
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
