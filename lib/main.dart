@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(const MyDrawingApp());
@@ -21,7 +22,6 @@ class MyDrawingApp extends StatelessWidget {
   }
 }
 
-// 1. الشاشة الترحيبية الرئيسية
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'تعلم كتابة الحروف والأرقام العربية مع السهم التوجيهي الذكي بدون إنترنت!',
+                      'تطبيق تعليمي ذكي يفحص دقة كتابة الطفل للحروف والأرقام فورياً!',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
                     ),
@@ -61,8 +61,6 @@ class HomeScreen extends StatelessWidget {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.amber,
-                        shadowColor: Colors.amberAccent,
-                        elevation: 5,
                         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                       ),
@@ -73,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                       child: const Text(
-                        'ابدأ التعلم الآن',
+                        'ابدأ البرمجة والتعلم',
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
@@ -88,7 +86,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// 2. شاشة الرسم والتتبع الذكي مع الأسهم الموجهة
 class DrawingScreen extends StatefulWidget {
   const DrawingScreen({super.key});
 
@@ -97,68 +94,103 @@ class DrawingScreen extends StatefulWidget {
 }
 
 class _DrawingScreenState extends State<DrawingScreen> {
-  // الحروف مع معلومات الأسهم التوجيهية (نص الحرف، واتجاه السهم المناسب له بصرياً)
+  // الحروف مع نقاط التحقق الافتراضية للفحص (موقع نسبي للحرف على الشاشة لضمان دقة الرسم)
   final List<Map<String, dynamic>> itemsToLearn = [
-    {'char': 'أ', 'arrow': Icons.arrow_downward, 'align': Alignment.topCenter, 'hint': 'اكتب من الأعلى لأسفل'},
-    {'char': 'ب', 'arrow': Icons.arrow_back, 'align': Alignment.bottomRight, 'hint': 'اكتب من اليمين إلى اليسار ثم لأعلى'},
-    {'char': 'ت', 'arrow': Icons.arrow_back, 'align': Alignment.bottomRight, 'hint': 'اكتب الطبق ثم ضع النقطتين'},
-    {'char': 'ث', 'arrow': Icons.arrow_back, 'align': Alignment.bottomRight, 'hint': 'اكتب الطبق ثم ضع الثلاث نقاط'},
-    {'char': 'ج', 'arrow': Icons.screen_rotation, 'align': Alignment.topRight, 'hint': 'ابدأ من الخط العلوي ثم الدوران'},
-    {'char': 'ح', 'arrow': Icons.screen_rotation, 'align': Alignment.topRight, 'hint': 'ابدأ من الخط العلوي ثم الدوران'},
-    {'char': 'خ', 'arrow': Icons.screen_rotation, 'align': Alignment.topRight, 'hint': 'ابدأ من الخط العلوي ثم الدوران'},
-    {'char': 'د', 'arrow': Icons.south_west, 'align': Alignment.topCenter, 'hint': 'انزل منحني ثم امشِ على السطر'},
-    {'char': 'ذ', 'arrow': Icons.south_west, 'align': Alignment.topCenter, 'hint': 'انزل منحني ثم ضع النقطة'},
-    {'char': 'ر', 'arrow': Icons.south_west, 'align': Alignment.topRight, 'hint': 'تزحلق لأسفل السطر'},
-    {'char': 'ز', 'arrow': Icons.south_west, 'align': Alignment.topRight, 'hint': 'تزحلق لأسفل السطر وضع النقطة'},
-    {'char': 'س', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'اكتب السنون ثم الكأس الكبير'},
-    {'char': 'ش', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'اكتب السنون والنقاط ثم الكأس'},
-    {'char': 'ص', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً ثم الكأس'},
-    {'char': 'ض', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً ثم الكأس والنقطة'},
-    {'char': 'ط', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً ثم ضع العصا من أعلى'},
-    {'char': 'ظ', 'arrow': Icons.loop, 'align': Alignment.bottomCenter, 'hint': 'اصعد واعمل عيناً وعصا ونقطة'},
-    {'char': 'ع', 'arrow': Icons.refresh, 'align': Alignment.topRight, 'hint': 'نصف دائرة صغيرة ثم نصف دائرة كبيرة'},
-    {'char': 'غ', 'arrow': Icons.refresh, 'align': Alignment.topRight, 'hint': 'نصف دائرة صغيرة وكبيرة ونقطة'},
-    {'char': 'ف', 'arrow': Icons.looks, 'align': Alignment.bottomRight, 'hint': 'دائرة صغيرة ثم طبق الفاء'},
-    {'char': 'ق', 'arrow': Icons.looks, 'align': Alignment.topRight, 'hint': 'دائرة ثم كأس ينزل تحت السطر ونقطتان'},
-    {'char': 'ك', 'arrow': Icons.arrow_downward, 'align': Alignment.topRight, 'hint': 'انزل مستقيماً ثم امشِ واكتب الهمزة'},
-    {'char': 'ل', 'arrow': Icons.arrow_downward, 'align': Alignment.topRight, 'hint': 'عصا طويلة تنزل بكأس تحت السطر'},
-    {'char': 'م', 'arrow': Icons.radio_button_checked, 'align': Alignment.topRight, 'hint': 'دائرة صغيرة وانزل لأسفل'},
-    {'char': 'ن', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'كأس غائر وداخله نقطة'},
-    {'char': 'هـ', 'arrow': Icons.loop, 'align': Alignment.topRight, 'hint': 'دائرة كبيرة وداخلها دائرة صغيرة'},
-    {'char': 'و', 'arrow': Icons.looks, 'align': Alignment.topRight, 'hint': 'رأس الفاء وجسم الراء المتزحلق'},
-    {'char': 'ي', 'arrow': Icons.trending_down, 'align': Alignment.topRight, 'hint': 'شكل البطة ونقطتين تحت السطر'},
-    {'char': '١', 'arrow': Icons.arrow_downward, 'align': Alignment.topCenter, 'hint': 'من الأعلى لأسفل'},
-    {'char': '٢', 'arrow': Icons.arrow_back, 'align': Alignment.topRight, 'hint': 'امشِ يساراً ثم انزل لأسفل'},
-    {'char': '٣', 'arrow': Icons.subdirectory_arrow_left, 'align': Alignment.topRight, 'hint': 'سنتين ثم انزل لأسفل'},
-    {'char': '٤', 'arrow': Icons.trending_down, 'align': Alignment.topRight, 'hint': 'منحنيين متتاليين'},
-    {'char': '٥', 'arrow': Icons.loop, 'align': Alignment.topCenter, 'hint': 'دائرة مستديرة'},
-    {'char': '٦', 'arrow': Icons.arrow_forward, 'align': Alignment.topLeft, 'hint': 'امشِ يميناً ثم انزل لأسفل'},
-    {'char': '٧', 'arrow': Icons.south_west, 'align': Alignment.topLeft, 'hint': 'انزل ثم اصعد لأعلى'},
-    {'char': '٨', 'arrow': Icons.north_east, 'align': Alignment.bottomRight, 'hint': 'اصعد ثم انزل لأسفل'},
-    {'char': '٩', 'arrow': Icons.loop, 'align': Alignment.topRight, 'hint': 'عصا وفي أعلاها دائرة'},
-    {'char': '١٠', 'arrow': Icons.arrow_downward, 'align': Alignment.topCenter, 'hint': 'واحد وبجانبه نقطة'}
+    {
+      'char': 'أ', 
+      'arrow': Icons.arrow_downward, 
+      'align': Alignment.topCenter, 
+      'hint': 'اكتب من الأعلى لأسفل مستقيماً',
+      'checkpoints': [Offset(0.5, 0.25), Offset(0.5, 0.45), Offset(0.5, 0.65), Offset(0.5, 0.75)]
+    },
+    {
+      'char': '١', 
+      'arrow': Icons.arrow_downward, 
+      'align': Alignment.topCenter, 
+      'hint': 'اكتب الرقم واحد من الأعلى لأسفل',
+      'checkpoints': [Offset(0.5, 0.3), Offset(0.5, 0.5), Offset(0.5, 0.7)]
+    },
+    {
+      'char': 'ب', 
+      'arrow': Icons.arrow_back, 
+      'align': Alignment.bottomRight, 
+      'hint': 'ابدأ من اليمين، انزل ثم امشِ على السطر واصعد',
+      'checkpoints': [Offset(0.8, 0.6), Offset(0.5, 0.65), Offset(0.2, 0.6)]
+    },
+    {
+      'char': '٥', 
+      'arrow': Icons.loop, 
+      'align': Alignment.topCenter, 
+      'hint': 'ارسم دائرة كعكة مستديرة بالكامل',
+      'checkpoints': [Offset(0.5, 0.3), Offset(0.7, 0.5), Offset(0.5, 0.7), Offset(0.3, 0.5)]
+    }
   ];
 
   int currentIndex = 0;
   List<Offset?> points = [];
+  Set<int> passedCheckpoints = {}; // حفظ نقاط التحقق التي مر عليها الطفل صح
+  String feedbackMessage = "تتبع السهم وابدأ الكتابة";
+  Color feedbackColor = Colors.purple;
+  bool isCompleted = false;
+
+  void checkDrawingAccuracy(Offset localPos, Size canvasSize, List<Offset> checkpoints) {
+    if (isCompleted) return;
+
+    bool nearAnyPath = false;
+    double maxAllowedDistance = 45.0; // المسافة المسموحة لابتعاد إصبع الطفل عن الخط الشفاف
+
+    for (int i = 0; i < checkpoints.length; i++) {
+      // تحويل النسبة المئوية للنقطة إلى بكسلات حقيقية حسب حجم شاشة هاتف الطفل
+      Offset targetPixel = Offset(checkpoints[i].dx * canvasSize.width, checkpoints[i].dy * canvasSize.height);
+      double distance = (localPos - targetPixel).distance;
+
+      if (distance < maxAllowedDistance) {
+        nearAnyPath = true;
+        if (!passedCheckpoints.contains(i)) {
+          setState(() {
+            passedCheckpoints.add(i);
+          });
+        }
+      }
+    }
+
+    // إذا ابتعد الطفل كثيراً عن مسار الحرف يظهر إشعار الخطأ فوراً
+    if (points.length > 5 && !nearAnyPath && points.last != null) {
+      setState(() {
+        feedbackMessage = "⚠️ انتبه! لقد خرجت عن مسار الحرف الصحيح";
+        feedbackColor = Colors.redAccent;
+      });
+    } else if (nearAnyPath && !isCompleted) {
+      setState(() {
+        feedbackMessage = "✍️ رائع.. استمر في التتبع!";
+        feedbackColor = Colors.amber.shade800;
+      });
+    }
+
+    // التحقق من النجاح: إذا مر الطفل على جميع النقاط الهيكلية بنجاح
+    if (passedCheckpoints.length == checkpoints.length && !isCompleted) {
+      setState(() {
+        isCompleted = true;
+        feedbackMessage = "🎉 ممتاز بطل! كتابة صحيحة 100%";
+        feedbackColor = Colors.green;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     var currentItem = itemsToLearn[currentIndex];
+    List<Offset> checkpoints = List<Offset>.from(currentItem['checkpoints']);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تتبع السهم واكتب الحرف', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('المصحح الذكي للكتابة', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.purple,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: Column(
         children: [
-          // لوحة التحكم العلوية لاختيار الحرف
+          // لوحة التحكم والتبديل
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             child: Row(
@@ -169,10 +201,10 @@ class _DrawingScreenState extends State<DrawingScreen> {
                   onPressed: currentIndex > 0 ? () {
                     setState(() {
                       currentIndex--;
-                      points.clear();
+                      resetCanvas();
                     });
                   } : null,
-                  child: const Text('السابق', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: const Text('السابق', style: TextStyle(color: Colors.white)),
                 ),
                 Text(
                   'تعلّم: ${currentItem['char']}',
@@ -183,138 +215,136 @@ class _DrawingScreenState extends State<DrawingScreen> {
                   onPressed: currentIndex < itemsToLearn.length - 1 ? () {
                     setState(() {
                       currentIndex++;
-                      points.clear();
+                      resetCanvas();
                     });
                   } : null,
-                  child: const Text('التالي', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: const Text('التالي', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
           ),
 
-          // شريط التوجيه الصوتي النصي التفاعلي للأطفال
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(color: Colors.purple.shade50, borderRadius: BorderRadius.circular(10)),
+          // شاشة الإشعارات الذكية والتقييم الفوري للطفل (صح / خطأ)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            width: double.infinite,
+            decoration: BoxDecoration(
+              color: feedbackColor.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: feedbackColor, width: 2)
+            ),
             child: Text(
-              '💡 ${currentItem['hint']}',
+              feedbackMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.purple.shade800, fontWeight: FontWeight.bold, fontSize: 14),
+              style: TextStyle(color: feedbackColor,尊 fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),
 
-          // لوحة الرسم (Canvas) والتتبع
+          // لوحة اللمس والرسم
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Stack(
-                children: [
-                  // الطبقة الخلفية: الحرف الشفاف الكبير جداً ليوجه يد الطفل
-                  Center(
-                    child: Text(
-                      currentItem['char'],
-                      style: TextStyle(
-                        fontSize: 280,
-                        fontWeight: FontWeight.w100,
-                        color: Colors.grey.withOpacity(0.18),
-                      ),
-                    ),
-                  ),
-                  
-                  // الطبقة المتوسطة: السهم التوجيهي الذكي المتحرك لإرشاد الطفل من أين يبدأ
-                  Align(
-                    alignment: currentItem['align'],
-                    child: Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.withOpacity(0.8),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(color: Colors.amber.shade300, blurRadius: 12, spreadRadius: 4)
-                          ]
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: Icon(
-                          currentItem['arrow'],
-                          size: 36,
-                          color: Colors.white,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  Size canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+                  return Stack(
+                    children: [
+                      // الحرف الإرشادي
+                      Center(
+                        child: Text(
+                          currentItem['char'],
+                          style: TextStyle(
+                            fontSize: 290,
+                            fontWeight: FontWeight.w100,
+                            color: isCompleted ? Colors.green.withOpacity(0.2) : Colors.grey.withOpacity(0.15),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                      
+                      // السهم التوجيهي (يختفي عند نجاح الطفل)
+                      if (!isCompleted)
+                        Align(
+                          alignment: currentItem['align'],
+                          child: Padding(
+                            padding: const EdgeInsets.all(40.0),
+                            child: Icon(currentItem['arrow'], size: 40, color: Colors.amber),
+                          ),
+                        ),
 
-                  // الطبقة الأمامية: لوحة اللمس والرسم الفعلي بسلاسة فلاتر
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.purple.shade200, width: 4),
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.transparent,
-                    ),
-                    child: GestureDetector(
-                      onPanUpdate: (DragUpdateDetails details) {
-                        setState(() {
-                          RenderBox object = context.findRenderObject() as RenderBox;
-                          Offset localPosition = object.globalToLocal(details.globalPosition);
-                          points.add(localPosition - const Offset(0, 130)); // ضبط حساسية اللمس للأجهزة المختلفة
-                        });
-                      },
-                      onPanEnd: (DragEndDetails details) {
-                        points.add(null);
-                      },
-                      child: CustomPaint(
-                        painter: DrawingPainter(points: points),
-                        size: Size.infinite,
+                      // لوحة الرسم والمعالجة الذكية للمس
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: feedbackColor.withOpacity(0.4), width: 4),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: GestureDetector(
+                          onPanUpdate: (details) {
+                            RenderBox object = context.findRenderObject() as RenderBox;
+                            Offset localPosition = object.globalToLocal(details.globalPosition);
+                            Offset adjustedPos = localPosition - const Offset(0, 140); // موازنة الإحداثيات لشاشة الموبايل
+                            
+                            setState(() {
+                              points.add(adjustedPos);
+                            });
+                            
+                            checkDrawingAccuracy(adjustedPos, canvasSize, checkpoints);
+                          },
+                          onPanEnd: (details) {
+                            points.add(null);
+                          },
+                          child: CustomPaint(
+                            painter: DrawingPainter(points: points, isSuccess: isCompleted),
+                            size: Size.infinite,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             ),
           ),
 
-          // أزرار التحكم السفلية (الممسحة)
+          // زر المسح والتنظيف
           Padding(
-            padding: const EdgeInsets.only(bottom: 25.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      points.clear();
-                    });
-                  },
-                  icon: const Icon(Icons.delete, color: Colors.white),
-                  label: const Text('امسح اللوحة', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-              ],
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12)),
+              onPressed: resetCanvas,
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              label: const Text('إعادة المحاولة', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
       ),
     );
   }
+
+  void resetCanvas() {
+    setState(() {
+      points.clear();
+      passedCheckpoints.clear();
+      isCompleted = false;
+      feedbackMessage = "تتبع السهم وابدأ الكتابة";
+      feedbackColor = Colors.purple;
+    });
+  }
 }
 
 class DrawingPainter extends CustomPainter {
   final List<Offset?> points;
+  final bool isSuccess;
 
-  DrawingPainter({required this.points});
+  DrawingPainter({required this.points, required this.isSuccess});
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.amber.shade700
+      ..color = isSuccess ? Colors.green.shade600 : Colors.amber.shade800 // يتحول الخط للأخضر عند النجاح كاملاً
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 11.0; // زيادة السمك قليلاً لتسهيل الرؤية للطفل
+      ..strokeWidth = 12.0;
 
     for (int i = 0; i < points.length - 1; i++) {
       if (points[i] != null && points[i + 1] != null) {
