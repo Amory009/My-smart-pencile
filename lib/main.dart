@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 void main() {
   runApp(const MyDrawingApp());
@@ -71,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                       child: const Text(
-                        'ابدأ البرمجة والتعلم',
+                        'ابدأ التعلم الآن',
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
@@ -94,7 +93,6 @@ class DrawingScreen extends StatefulWidget {
 }
 
 class _DrawingScreenState extends State<DrawingScreen> {
-  // الحروف مع نقاط التحقق الافتراضية للفحص (موقع نسبي للحرف على الشاشة لضمان دقة الرسم)
   final List<Map<String, dynamic>> itemsToLearn = [
     {
       'char': 'أ', 
@@ -121,14 +119,14 @@ class _DrawingScreenState extends State<DrawingScreen> {
       'char': '٥', 
       'arrow': Icons.loop, 
       'align': Alignment.topCenter, 
-      'hint': 'ارسم دائرة كعكة مستديرة بالكامل',
+      'hint': 'ارسم دائرة مستديرة بالكامل',
       'checkpoints': [Offset(0.5, 0.3), Offset(0.7, 0.5), Offset(0.5, 0.7), Offset(0.3, 0.5)]
     }
   ];
 
   int currentIndex = 0;
   List<Offset?> points = [];
-  Set<int> passedCheckpoints = {}; // حفظ نقاط التحقق التي مر عليها الطفل صح
+  Set<int> passedCheckpoints = {}; 
   String feedbackMessage = "تتبع السهم وابدأ الكتابة";
   Color feedbackColor = Colors.purple;
   bool isCompleted = false;
@@ -137,10 +135,9 @@ class _DrawingScreenState extends State<DrawingScreen> {
     if (isCompleted) return;
 
     bool nearAnyPath = false;
-    double maxAllowedDistance = 45.0; // المسافة المسموحة لابتعاد إصبع الطفل عن الخط الشفاف
+    double maxAllowedDistance = 45.0; 
 
     for (int i = 0; i < checkpoints.length; i++) {
-      // تحويل النسبة المئوية للنقطة إلى بكسلات حقيقية حسب حجم شاشة هاتف الطفل
       Offset targetPixel = Offset(checkpoints[i].dx * canvasSize.width, checkpoints[i].dy * canvasSize.height);
       double distance = (localPos - targetPixel).distance;
 
@@ -154,7 +151,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
       }
     }
 
-    // إذا ابتعد الطفل كثيراً عن مسار الحرف يظهر إشعار الخطأ فوراً
     if (points.length > 5 && !nearAnyPath && points.last != null) {
       setState(() {
         feedbackMessage = "⚠️ انتبه! لقد خرجت عن مسار الحرف الصحيح";
@@ -167,7 +163,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
       });
     }
 
-    // التحقق من النجاح: إذا مر الطفل على جميع النقاط الهيكلية بنجاح
     if (passedCheckpoints.length == checkpoints.length && !isCompleted) {
       setState(() {
         isCompleted = true;
@@ -187,10 +182,13 @@ class _DrawingScreenState extends State<DrawingScreen> {
         title: const Text('المصحح الذكي للكتابة', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.purple,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [
-          // لوحة التحكم والتبديل
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             child: Row(
@@ -224,7 +222,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
             ),
           ),
 
-          // شاشة الإشعارات الذكية والتقييم الفوري للطفل (صح / خطأ)
+          // تم تعديل هذا السطر وحذف الحرف الغريب تماماً
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             padding: const EdgeInsets.all(10),
@@ -238,11 +236,10 @@ class _DrawingScreenState extends State<DrawingScreen> {
             child: Text(
               feedbackMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(color: feedbackColor,尊 fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(color: feedbackColor, fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),
 
-          // لوحة اللمس والرسم
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
@@ -251,7 +248,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
                   Size canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
                   return Stack(
                     children: [
-                      // الحرف الإرشادي
                       Center(
                         child: Text(
                           currentItem['char'],
@@ -263,7 +259,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
                         ),
                       ),
                       
-                      // السهم التوجيهي (يختفي عند نجاح الطفل)
                       if (!isCompleted)
                         Align(
                           alignment: currentItem['align'],
@@ -273,7 +268,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
                           ),
                         ),
 
-                      // لوحة الرسم والمعالجة الذكية للمس
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(color: feedbackColor.withOpacity(0.4), width: 4),
@@ -283,7 +277,7 @@ class _DrawingScreenState extends State<DrawingScreen> {
                           onPanUpdate: (details) {
                             RenderBox object = context.findRenderObject() as RenderBox;
                             Offset localPosition = object.globalToLocal(details.globalPosition);
-                            Offset adjustedPos = localPosition - const Offset(0, 140); // موازنة الإحداثيات لشاشة الموبايل
+                            Offset adjustedPos = localPosition - const Offset(0, 140);
                             
                             setState(() {
                               points.add(adjustedPos);
@@ -307,7 +301,6 @@ class _DrawingScreenState extends State<DrawingScreen> {
             ),
           ),
 
-          // زر المسح والتنظيف
           Padding(
             padding: const EdgeInsets.only(bottom: 20.0),
             child: ElevatedButton.icon(
@@ -342,7 +335,7 @@ class DrawingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = isSuccess ? Colors.green.shade600 : Colors.amber.shade800 // يتحول الخط للأخضر عند النجاح كاملاً
+      ..color = isSuccess ? Colors.green.shade600 : Colors.amber.shade800
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 12.0;
 
