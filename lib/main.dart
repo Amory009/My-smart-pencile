@@ -222,12 +222,12 @@ class _DrawingScreenState extends State<DrawingScreen> {
             ),
           ),
 
-          // تم تعديل هذا السطر وحذف الحرف الغريب تماماً
+          // تم تصحيح الكلمة هنا إلى double.infinity
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             padding: const EdgeInsets.all(10),
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            width: double.infinite,
+            width: double.infinity,
             decoration: BoxDecoration(
               color: feedbackColor.withOpacity(0.15),
               borderRadius: BorderRadius.circular(15),
