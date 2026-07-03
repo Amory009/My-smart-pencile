@@ -21,14 +21,14 @@ jobs:
         distribution: 'zulu'
         java-version: '17'
 
-    # 3. تثبيت بيئة فلاتر الكاملة
+    # 3. تثبيت بيئة فلاتر المستقرة
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.19.0'
         channel: 'stable'
 
-    # 4. توليد هيكل أندرويد تلقائياً وبشكل سليم
+    # 4. توليد هيكل أندرويد تلقائياً وبشكل سليم نظيف
     - name: Auto-create Flutter project structures
       run: |
         flutter create --org com.ammar --project-name my_drawing_app temp_project
@@ -42,9 +42,9 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    # 6. بناء تطبيق أندرويد شامل لكافة أنواع المعالجات والأجهزة الأخرى
-    - name: Build الشامل APK
-      run: flutter build apk --debug --target-platform android-arm,android-arm64,android-x64
+    # 6. بناء التطبيق بأسلوب فلاتر القياسي المتوافق مع الهواتف الأخرى
+    - name: Build APK
+      run: flutter build apk --debug
 
     # 7. استخراج الملف النهائي الجاهز للمشاركة والتثبيت
     - name: Upload APK Artifact
